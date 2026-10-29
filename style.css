@@ -1,0 +1,50 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+#pizarra {
+    background-color: antiquewhite;
+    width: 100vw;
+    height: 95vh;
+}
+
+h1 {
+    text-align: center;
+    font-size: 3em;
+    margin: 0.2em;
+}
+
+.nota {
+    position: absolute;
+    width: 15vw;
+    height: 15vh;
+    background-color: aqua;
+    margin: 1em;
+    border: 1px  solid black;
+}
+
+#addNotaButton {
+    
+    position: absolute;
+    z-index: 2;
+    left: 92vw;
+    top: 90vh;
+    width: 5vw;
+    height: 5vw;
+    border-radius: 50px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid black;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3em;
+    color: #fff;
+    text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000,
+               1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000;
+}
+
+#addNotaButton p {
+        pointer-events: none;
+}
