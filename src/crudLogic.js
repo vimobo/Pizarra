@@ -14,6 +14,9 @@ const app = initializeApp(firebaseConfig);
 //cargamos la db de firestorm
 const db = getFirestore(app);
 
+//colores disponibles
+const colors = ["blue", "red", "green", "yellow"];
+
 //IMPRIMIR ELEMENTOS
 
 async function imprimirNotaPorId(id) {
@@ -21,15 +24,22 @@ async function imprimirNotaPorId(id) {
     miDoc = miDoc.data();
 
     const pizarra = document.getElementById("pizarra");
-   pizarra.insertAdjacentHTML(
-    "beforeend",
-    `<div class="nota" id="${id}"
+    pizarra.insertAdjacentHTML(
+        "beforeend",
+        `<div class="nota ${miDoc.color}" id="${id}"
           style="left: ${miDoc.x}vw; top: ${miDoc.y}vh;">
         <textarea class="titulo" placeholder="Título">${miDoc.titulo}</textarea>
-        <button class="deleteButton">🗑</button>
-        <textarea class="contenido" placeholder="Contenido">${miDoc.contenido}</textarea>
+        <button class="openMenuButton">></button>
+        <div class="notaMenu" id="notaMenu" style="display: none;"> 
+            <div class="notaMenuOption" id='notaMenuBlue'></div>
+            <div class="notaMenuOption" id='notaMenuRed'></div>
+            <div class="notaMenuOption" id='notaMenuGreen'></div>
+            <div class="notaMenuOption" id='notaMenuYellow'></div>
+            <div class="notaMenuOption" id='notaMenuBorrar'></div>
+        </div>
+        <textarea class="contenido" placeholder="...">${miDoc.contenido}</textarea>
     </div>`
-);
+    );
 
     await addDragEventListener(document.getElementById(id));
 }
@@ -44,34 +54,112 @@ async function imprimirNotas() {
         await imprimirNotaPorId(doc.id);
     }
 }
-/*
-async function imprimirAddButton() {
-    console.log(document.getElementById("pizarra"));
-    document.getElementById("pizarra").innerHTML += "<div id='addNotaButton'><p></p></div>";
-}
-*/
 
+// *
+//Eventos para add , delete y abrir menu
+// *
 
 async function iniciarEventLisners() {
     document.getElementById("addNotaButton").addEventListener("click", () => {
         addNota();
-        console.log("hola")
     });
 
     //delete
     document.getElementById("pizarra").addEventListener("click", (event) => {
         const target = event.target;
-        if (target.tagName == "BUTTON") {
+        if (target.id == "notaMenuBorrar") {
             deleteNota(target.closest(".nota").id)
         }
     })
+
+    //ajustar altura
+    document.addEventListener("input", (event) => {
+
+        if (event.target.matches(".nota textarea")) {
+            ajustarAltura(event.target);
+        }
+
+    });
+
+    //menu events
+    document.getElementById("pizarra").addEventListener("click", (event) => {
+        desplegarMenu(event);
+        cambiarColor(event);
+    })
+    
+    //update notas events
+    document.getElementById("pizarra").addEventListener("change", (event) => {
+        acutalizarTexto(event);
+        
+    })
+
 }
 
+
+//ajustar altura del text area
+
+function ajustarAltura(textarea) {
+
+    textarea.style.height = "auto";
+
+    textarea.style.height = textarea.scrollHeight + "px";
+
+}
+
+
+//despliegue del menu
+function desplegarMenu(event) {
+    let target = event.target;
+
+    if (target.matches(".nota .openMenuButton")) {
+        let nota = target.closest(".nota");
+        let menu = nota.querySelector(".notaMenu");
+
+        if (menu.style.display == "none")
+            menu.style.display = "flex";
+        else
+            menu.style.display = "none";
+    }
+}
+
+
+//color  de la nota
+function cambiarColor(event) {
+
+    let target = event.target;
+
+    if (target.matches(".nota .notaMenu .notaMenuOption")) {
+
+        let nota = target.closest(".nota");
+        let newColor = (target.id).replace("notaMenu", "").toLowerCase();
+
+        if(nota.class != "nota " + newColor){
+            nota.id
+            updateColor(nota.id, newColor)
+            nota.className = "nota " + newColor;
+        }
+
+    }
+}
+
+//cambiar texto
+function acutalizarTexto(event) {
+    let target = event.target;
+    if(target.tagName == "TEXTAREA") {
+        if(target.className == "titulo")
+            updateTitulo(target.closest(".nota").id, target.value)
+        else if(target.className == "contenido")
+            updateContenido(target.closest(".nota").id, target.value)
+
+    }
+
+}
 
 
 async function iniciar() {
     await imprimirNotas();
     iniciarEventLisners();
+    await addDragEventListener(document.getElementById("addNotaButton"))
 }
 
 //CRUD
@@ -81,7 +169,8 @@ async function addNota() {
         titulo: "Título",
         contenido: "...",
         x: 42.5,
-        y: 42.5
+        y: 42.5,
+        color: colors[Math.floor(Math.random() * colors.length)]
     };
 
     const docRef = await addDoc(collection(db, "notas"), nota);
@@ -105,6 +194,13 @@ async function updateContenido(id, string) {
     });
 }
 
+async function updateColor(id, color) {
+
+    updateDoc(doc(db, "notas", id), {
+        color: color
+    });
+}
+
 export async function updateXY(id, x, y) {
 
     updateDoc(doc(db, "notas", id), {
@@ -115,7 +211,6 @@ export async function updateXY(id, x, y) {
 
 
 async function deleteNota(id) {
-    console.log("hola")
     await deleteDoc(doc(db, "notas", id));
     deleteImprimirNota(id);
 }
@@ -125,13 +220,7 @@ function deleteImprimirNota(id) {
 }
 
 //MAIN
-/*
 
-*/
+
 await iniciar();
 
-/*
-window.addNota()  {
-    return;
-}
-    */
