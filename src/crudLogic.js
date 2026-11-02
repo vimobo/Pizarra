@@ -105,11 +105,11 @@ async function iniciarEventLisners() {
     //menu events
     document.getElementById("pizarra").addEventListener("pointerup", (event) => {
 
-        if(!event.target.closest(".nota")) return;
+        if (!event.target.closest(".nota")) return;
 
-            desplegarMenu(event);
-            cambiarColor(event);
-        
+        desplegarMenu(event);
+        cambiarColor(event);
+
     })
 
     //update notas events
@@ -123,16 +123,16 @@ async function iniciarEventLisners() {
     document.getElementById("infoInicial").addEventListener("click", (event) => {
         const target = event.target;
         console.log(target)
-        if(target.id == "okButton")
+        if (target.id == "okButton")
             target.closest("#infoInicial").style = "display: none;";
 
-        else if(target.id == "notShowAgainButton") {
+        else if (target.id == "notShowAgainButton") {
 
             setCookie("infoInicialCerrado", "true", 720);
             target.closest("#infoInicial").style = "display: none;";
         }
 
-    });
+    }, { once: true });
 
 }
 
@@ -203,18 +203,18 @@ async function acutalizarTexto(event) {
 
 //crear cookie
 function setCookie(cname, cvalue, exdays) {
-  const d = new Date();
-  d.setTime(d.getTime() + (exdays*24*60*60*1000));
-  let expires = "expires="+ d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
 
 async function iniciar() {
 
-    if (document.cookie.includes("infoInicialCerrado=true")) 
+    if (document.cookie.includes("infoInicialCerrado=true"))
         document.getElementById("infoInicial").style.display = "none";
-    else 
+    else
         document.getElementById("infoInicial").style.position = "absolute";
 
     await imprimirNotas();
@@ -273,15 +273,19 @@ export async function updateXY(id, x, y) {
 
 
 async function deleteNota(id) {
-    await deleteDoc(doc(db, "notas", id));
-    deleteImprimirNota(id);
+    const nota = document.getElementById(id);
 
+    if (!nota) return;
+
+    // Ejecutar animación
+    nota.classList.add("eliminando");
+
+    // Esperar a que termine
+    nota.addEventListener("animationend", async () => {
+        await deleteDoc(doc(db, "notas", id));
+        nota.remove();
+    }, { once: true });
 }
-
-function deleteImprimirNota(id) {
-    document.getElementById(id).remove();
-}
-
 //MAIN
 
 
