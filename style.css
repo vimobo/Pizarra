@@ -307,7 +307,7 @@ h1 {
 
 
 
-#confimDelete {
+#confirmDelete {
     transition: 300ms;
     border-radius: 30px;
     gap: 20px;
@@ -323,12 +323,12 @@ h1 {
     width: 40vw;
     height: 20vh;
     left: 30vw;
-    top: 30vw;
+    top: 20vw;
     font-family: inherit;
 
 }
 
-#confimDelete p{
+#confirmDelete p{
     text-align: center;
     flex: 1;
 }
@@ -338,7 +338,7 @@ h1 {
     background-color: #6D9EFF;
 }
 
-#confimDelete button{
+#confirmDelete button{
     font-family: inherit;
     width: 80%;
     border-radius: 30px;

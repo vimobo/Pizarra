@@ -85,10 +85,11 @@ async function iniciarEventLisners() {
         if (target.id == "notaMenuBorrar") {
 
             event.preventDefault();
+            console.log(target)
 
             document.getElementById("confirmDelete").style = "display: flex;"
 
-            document.getElementById("confirmDelete").addEventListener("pointerout", (e) => {
+            document.getElementById("confirmDelete").addEventListener("pointerdown", (e) => {
 
                 if(e.target.id == "confirmDeleteYes") {
 
@@ -97,6 +98,9 @@ async function iniciarEventLisners() {
                     nota.dataset.eliminada = "true";
                     
                     deleteNota(nota.id)
+
+                    document.getElementById("confirmDelete").style = "display: none;"
+
                 }
                 else if (e.target.id == "confirmDeleteNo"){
                     document.getElementById("confirmDelete").style = "display: none;"
@@ -237,10 +241,13 @@ function cambiarColor(event) {
 
     if (target.closest(".nota").dataset.eliminada == "true") return;
 
+    
     if (target.matches(".nota .notaMenu .notaMenuOption")) {
-
+        
         let nota = target.closest(".nota");
         let newColor = (target.id).replace("notaMenu", "").toLowerCase();
+         
+        if (!colors.includes(newColor)) return;
 
         if (nota.class != "nota " + newColor) {
             nota.id
