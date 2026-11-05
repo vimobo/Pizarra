@@ -7,7 +7,9 @@ export function addDragEventListener(elemento) {
     elemento.addEventListener("pointerdown", (event) => {
 
         if (event.target.closest(".contenido, button, .notaMenu")) return;
+        if (event.target.matches(".titulo") && !event.target.readOnly) return;
 
+        
         const inicioX = event.clientX;
         const inicioY = event.clientY;
 

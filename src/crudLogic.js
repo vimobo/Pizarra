@@ -31,7 +31,7 @@ async function imprimirNotaPorId(id) {
         "beforeend",
         `<div class="nota ${miDoc.color}" id="${id}"
           style="left: ${miDoc.x}vw; top: ${miDoc.y}vh;">
-        <textarea class="titulo" placeholder="Título">${miDoc.titulo}</textarea>
+        <textarea class="titulo" placeholder="Título" readonly>${miDoc.titulo}</textarea>
         <button class="openMenuButton">☰</button>
         <div class="notaMenu" id="notaMenu" style="display: none;"> 
             <div class="notaMenuOption" id='notaMenuBlue'></div>
@@ -40,7 +40,7 @@ async function imprimirNotaPorId(id) {
             <div class="notaMenuOption" id='notaMenuYellow'></div>
             <div class="notaMenuOption" id='notaMenuBorrar'></div>
         </div>
-        <textarea class="contenido" placeholder="...">${miDoc.contenido}</textarea>
+        <textarea class="contenido" placeholder="..." readonly>${miDoc.contenido}</textarea>
     </div>`
     );
 
@@ -86,11 +86,24 @@ async function iniciarEventLisners() {
 
             event.preventDefault();
 
-            let nota = target.closest(".nota");
+            document.getElementById("confirmDelete").style = "display: flex;"
 
-            nota.dataset.eliminada = "true";
+            document.getElementById("confirmDelete").addEventListener("pointerout", (e) => {
 
-            deleteNota(nota.id)
+                if(e.target.id == "confirmDeleteYes") {
+
+                    let nota = target.closest(".nota");
+                    
+                    nota.dataset.eliminada = "true";
+                    
+                    deleteNota(nota.id)
+                }
+                else if (e.target.id == "confirmDeleteNo"){
+                    document.getElementById("confirmDelete").style = "display: none;"
+
+                }
+            })
+            
         }
     })
 
@@ -115,10 +128,62 @@ async function iniciarEventLisners() {
 
     //update notas events
     document.getElementById("pizarra").addEventListener("change", (event) => {
-
+        event.target.removeAttribute("readonly");
         acutalizarTexto(event);
+        event.target.addAttribute("readonly");
 
     })
+
+    //update movil, doble toque
+
+    const pizarra = document.getElementById("pizarra");
+
+    let ultimoToque = null;
+
+    pizarra.addEventListener("pointerup", (event) => {
+
+        const textarea = event.target.closest(".nota textarea");
+
+        if (!textarea || !textarea.readOnly) return;
+
+        if (event.pointerType === "mouse") {
+            textarea.readOnly = false;
+            textarea.focus();
+            return;
+        }
+
+        if (event.pointerType === "touch") {
+
+            const ahora = Date.now();
+
+            if (
+                ultimoToque &&
+                ultimoToque.textarea === textarea &&
+                ahora - ultimoToque.tiempo < 350
+            ) {
+                textarea.readOnly = false;
+                textarea.focus();
+                ultimoToque = null;
+
+            } else {
+                ultimoToque = {
+                    textarea: textarea,
+                    tiempo: ahora
+                };
+            }
+        }
+    });
+
+    // Volver a bloquear al salir
+    pizarra.addEventListener("focusout", (event) => {
+
+        if (event.target.matches(".nota textarea")) {
+            event.target.readOnly = true;
+        }
+
+    });
+
+    //delete 
 
     //Info inicial
     document.getElementById("infoInicial").addEventListener("click", (event) => {
