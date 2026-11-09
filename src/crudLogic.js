@@ -62,16 +62,20 @@ async function imprimirNotas() {
 //Eventos para add , delete y abrir menu
 // *
 
+const addNotaButton = document.getElementById("addNotaButton");
+
+const infoInicial = document.getElementById("infoInicial");
+
 async function iniciarEventLisners() {
 
     let shortClick = false;
 
-    document.getElementById("addNotaButton").addEventListener("pointerdown", () => {
+    addNotaButton.addEventListener("pointerdown", () => {
         shortClick = true;
         setTimeout(() => shortClick = false, 300);
     });
 
-    document.getElementById("addNotaButton").addEventListener("pointerup", () => {
+    addNotaButton.addEventListener("pointerup", () => {
         console.log(shortClick)
         console.log()
         if (shortClick)
@@ -186,7 +190,7 @@ async function iniciarEventLisners() {
     //delete 
 
     //Info inicial
-    document.getElementById("infoInicial").addEventListener("click", (event) => {
+    infoInicial.addEventListener("click", (event) => {
         const target = event.target;
         console.log(target)
         if (target.id == "okButton")
@@ -284,7 +288,7 @@ async function iniciar() {
         document.getElementById("infoInicial").style.position = "absolute";
 
     await imprimirNotas();
-    iniciarEventLisners();
+    await iniciarEventLisners();
     await addDragEventListener(document.getElementById("addNotaButton"))
 }
 
