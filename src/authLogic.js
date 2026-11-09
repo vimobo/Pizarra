@@ -63,7 +63,7 @@ function login() {
         .then((userCredential) => {
             const user = userCredential.user;
             document.getElementById("authDivLogin").style.display = "none";
-            document.getElementById("pizarra").style.display = "flex";
+            mostrarPizarra();
             // ...
         })
         .catch((error) => {
@@ -112,7 +112,7 @@ async function register() {
                 // Signed up 
                 const user = userCredential.user;
                 document.getElementById("authDivRegister").style.display = "none";
-                document.getElementById("pizarra").style.display = "flex";
+                mostrarPizarra();
 
                 // ...
             })
@@ -140,7 +140,7 @@ async function signInGoogle() {
 
             document.getElementById("authDivRegister").style.display = "none";
             document.getElementById("authDivLogin").style.display = "none";
-            document.getElementById("pizarra").style.display = "flex";
+            mostrarPizarra();
 
         }).catch((error) => {
             // Handle Errors here.
@@ -153,4 +153,12 @@ async function signInGoogle() {
             const credential = GoogleAuthProvider.credentialFromError(error);
             // ...
         });
+}
+
+function mostrarPizarra() {
+            console.log(document.getElementById("addNotaButton").style.display);
+            document.getElementById("pizarra").style.display = "flex";
+            document.getElementById("addNotaButton").style.display = "flex";
+            console.log(document.getElementById("addNotaButton").style.display);
+
 }
