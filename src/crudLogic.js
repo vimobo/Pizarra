@@ -83,33 +83,57 @@ async function iniciarEventLisners() {
     });
 
     //delete
-    document.getElementById("pizarra").addEventListener("pointerdown", (event) => {
-        const target = event.target;
+    // DELETE
 
-        if (target.id == "notaMenuBorrar") {
+    let notaSeleccionada = null;
+
+    const confirmDelete = document.getElementById("confirmDelete");
+
+    function abrirConfirmacion(nota) {
+        notaSeleccionada = nota;
+
+        confirmDelete.style.display = "flex";
+
+        confirmDelete.addEventListener("pointerdown", handleConfirmDelete);
+    }
+
+    function handleConfirmDelete(e) {
+
+        if (e.target.id == "confirmDeleteYes") {
+
+            let nota = notaSeleccionada;
+
+            nota.dataset.eliminada = "true";
+
+            deleteNota(nota.id);
+
+        }
+        else if (e.target.id == "confirmDeleteNo") {
+
+            console.log("Eliminación cancelada");
+
+        }
+
+        if (e.target.id == "confirmDeleteYes" || e.target.id == "confirmDeleteNo") {
+
+            confirmDelete.style.display = "none";
+
+            confirmDelete.removeEventListener("pointerdown", handleConfirmDelete);
+
+            notaSeleccionada = null;
+        }
+    }
+
+    document.getElementById("pizarra").addEventListener("pointerdown", (event) => {
+
+        if (event.target.id == "notaMenuBorrar") {
 
             event.preventDefault();
 
-            document.getElementById("confirmDelete").style = "display: flex;"
-
-            document.getElementById("confirmDelete").addEventListener("pointerout", (e) => {
-
-                if(e.target.id == "confirmDeleteYes") {
-
-                    let nota = target.closest(".nota");
-                    
-                    nota.dataset.eliminada = "true";
-                    
-                    deleteNota(nota.id)
-                }
-                else if (e.target.id == "confirmDeleteNo"){
-                    document.getElementById("confirmDelete").style = "display: none;"
-
-                }
-            })
-            
+            abrirConfirmacion(event.target.closest(".nota"));
         }
-    })
+
+    });
 
     //ajustar altura
     document.addEventListener("input", (event) => {
@@ -204,6 +228,52 @@ async function iniciarEventLisners() {
 
     }, { once: true });
 
+    // swipe delete
+
+    let startX = 0;
+    let startY = 0;
+    let notaSwipe = null;
+
+    pizarra.addEventListener("pointerdown", (event) => {
+
+        if (event.pointerType !== "touch") return;
+
+        notaSwipe = event.target.closest(".nota");
+
+        if (!notaSwipe) return;
+
+        startX = event.clientX;
+        startY = event.clientY;
+
+    });
+
+    pizarra.addEventListener("pointerup", (event) => {
+
+        if (!notaSwipe) return;
+
+        let endX = event.clientX;
+        let endY = event.clientY;
+
+        let diferenciaX = endX - startX;
+        let diferenciaY = endY - startY;
+
+        if (
+            Math.abs(diferenciaX) > 80 &&
+            Math.abs(diferenciaX) > Math.abs(diferenciaY)
+        ) {
+            if (notaSwipe.dataset.eliminada != "true") {
+                abrirConfirmacion(notaSwipe);
+            }
+        }
+
+        notaSwipe = null;
+
+    });
+
+    pizarra.addEventListener("pointercancel", () => {
+        notaSwipe = null;
+    });
+
 }
 
 
@@ -241,10 +311,13 @@ function cambiarColor(event) {
 
     if (target.closest(".nota").dataset.eliminada == "true") return;
 
+
     if (target.matches(".nota .notaMenu .notaMenuOption")) {
 
         let nota = target.closest(".nota");
         let newColor = (target.id).replace("notaMenu", "").toLowerCase();
+
+        if (!colors.includes(newColor)) return;
 
         if (nota.class != "nota " + newColor) {
             nota.id
@@ -347,15 +420,14 @@ async function deleteNota(id) {
 
     if (!nota) return;
 
-    // Ejecutar animación
     nota.classList.add("eliminando");
 
-    // Esperar a que termine
     nota.addEventListener("animationend", async () => {
         await deleteDoc(doc(db, "notas", id));
         nota.remove();
     }, { once: true });
 }
+
 //MAIN
 
 

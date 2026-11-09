@@ -15,8 +15,7 @@ export function addDragEventListener(elemento) {
 
         const elementoX = parseFloat(elemento.style.left) || 0;
         const elementoY = parseFloat(elemento.style.top) || 0;
-        console.log(elementoX +"  "+elementoY)
-        console.log(elemento)
+
         let xActual = elementoX;
         let yActual = elementoY;
 
