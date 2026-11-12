@@ -25,7 +25,9 @@
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="Hola*_123">
         <p id="notRegistered">No tienes cuenta? Registrate</p>
+        <p class="errors" id="loginErrors"></p>
         <input type="button" id="signInGoogle" value="Sign In With Google">
+
 
         <input type="submit" id="submitLogin" value="Submit">
     </div>
@@ -38,14 +40,19 @@
         <input type="password" id="passwordRegister">
         <label for="passwordRegister2">Repeat password</label>
         <input type="password" id="passwordRegister2">
-        <p id="errorResponse"></p>
         <p id="notLogged">Ya tienes cuenta? Logeate</p>
+        <p  class="errors"  id="registerErrors"></p>
         <input type="button" id="registerGoogle" value="Register With Google">
 
+        
         <input type="submit" id="submitRegister" value="Submit">
     </div>
 
     <div id="pizarra">
+        <div>
+            <p id="helloWorld"></p>
+            <img  id="profilePic" src="" alt="">
+        </div>
         <div id="infoInicial">
             <h2>Bienvenido a la tu pizarra</h2>
             <div>

@@ -19,7 +19,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
-const auth = getAuth();
+const auth = getAuth(app);
 
 
 signOut(auth).then(() => {
@@ -59,7 +59,7 @@ function login() {
 
     //signInWithEmailAndPassword(auth, mail, pass);
 
-    signInWithEmailAndPassword(getAuth(), mail, pass)
+    signInWithEmailAndPassword(auth, mail, pass)
         .then((userCredential) => {
             const user = userCredential.user;
             document.getElementById("authDivLogin").style.display = "none";
@@ -69,7 +69,9 @@ function login() {
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(error.message);
+                console.log(errorMessage);
+
+            document.getElementById("loginErrors").textContent = errorMessage;
         });
 
 }
@@ -83,14 +85,6 @@ async function register() {
     let pass = document.getElementById("passwordRegister").value;
     let passR = document.getElementById("passwordRegister2").value;
 
-    console.log(mail)
-    console.log(pass)
-    console.log(passR)
-
-    if (passR != pass) {
-
-        return
-    }
 
     const status = await validatePassword(getAuth(), pass);
     if (!status.isValid) {
@@ -102,7 +96,7 @@ async function register() {
         // the given password. For example:
         const needsLowerCase = status.containsLowercaseLetter !== true;
 
-        document.getElementById("errorResponse").textContent = needsLowerCase;
+        document.getElementById("registerErrors").textContent = needsLowerCase;
 
 
     } else {
@@ -112,23 +106,24 @@ async function register() {
                 // Signed up 
                 const user = userCredential.user;
                 document.getElementById("authDivRegister").style.display = "none";
-                mostrarPizarra();
+                mostrarPizarra(user);
 
                 // ...
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-
-                document.getElementById("errorResponse").textContent = errorMessage;
+                console.log(document.getElementById("registerErrors"));
+                document.getElementById("registerErrors").textContent = errorMessage;
             });
+            
     }
 }
 
 async function signInGoogle() {
 
 
-    signInWithPopup(getAuth(), provider)
+    signInWithPopup(auth, provider)
         .then((result) => {
             // This gives you a Google Access Token. You can use it to access the Google API.
             const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -140,13 +135,14 @@ async function signInGoogle() {
 
             document.getElementById("authDivRegister").style.display = "none";
             document.getElementById("authDivLogin").style.display = "none";
-            mostrarPizarra();
+            mostrarPizarra(user);
 
         }).catch((error) => {
             // Handle Errors here.
 
             const errorCode = error.code;
             const errorMessage = error.message;
+            console.log(errorMessage);
             // The email of the user's account used.
             const email = error.customData.email;
             // The AuthCredential type that was used.
@@ -155,10 +151,11 @@ async function signInGoogle() {
         });
 }
 
-function mostrarPizarra() {
-            console.log(document.getElementById("addNotaButton").style.display);
-            document.getElementById("pizarra").style.display = "flex";
-            document.getElementById("addNotaButton").style.display = "flex";
-            console.log(document.getElementById("addNotaButton").style.display);
+function mostrarPizarra(user) {
+    document.getElementById("helloWorld").textContent = user;
+    console.log(document.getElementById("addNotaButton").style.display);
+    document.getElementById("pizarra").style.display = "flex";
+    document.getElementById("addNotaButton").style.display = "flex";
+    console.log(document.getElementById("addNotaButton").style.display);
 
 }

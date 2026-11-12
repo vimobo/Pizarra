@@ -383,3 +383,14 @@ h1 {
     background-color: #B7CEFF;
     flex: 1;
 }
+
+#loginErrors {
+    color: red;
+    text-decoration: none;
+}
+
+
+#registerErrors {
+    color: red;
+    text-decoration: none;
+}
