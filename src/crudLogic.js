@@ -18,11 +18,22 @@ const db = getFirestore(app);
 //colores disponibles
 const colors = ["blue", "red", "green", "yellow"];
 
+//idUser
+let userId = ""; 
+
+function getUserId(){
+    return userId;
+}
+
+export function setUserId(id) {
+    userId = id;
+
+}
 
 //IMPRIMIR ELEMENTOS
 
 async function imprimirNotaPorId(id) {
-    let miDoc = await getDoc(doc(db, "notas", id));
+    let miDoc = await getDoc(doc(db, userId, id));
     miDoc = miDoc.data();
 
 
@@ -48,12 +59,12 @@ async function imprimirNotaPorId(id) {
 }
 
 async function imprimirNotas() {
-    const misDatos = await getDocs(collection(db, "notas"));
+    const misDatos = await getDocs(collection(db, userId));
     const listaDatos = misDatos.docs;
 
     document.getElementById("pizarra").innerHTML = "";
-
     for (let doc of listaDatos) {
+        console.log(doc);
         await imprimirNotaPorId(doc.id);
     }
 }
@@ -161,6 +172,11 @@ async function iniciarEventLisners() {
         event.target.addAttribute("readonly");
 
     })
+
+    //menu user
+    document.getElementById("profilePicMenu").addEventListener("click", (event) => {
+        desplegarMenuUser(event);
+    });
 
     //update movil, doble toque
 
@@ -303,6 +319,21 @@ function desplegarMenu(event) {
     }
 }
 
+//despligue menu user
+function desplegarMenuUser(event) {
+    let target = event.target;
+
+    if (target.matches("img")) {
+        let nota = target.closest("#profilePicMenu");
+        let menu = nota.querySelector("#profileMenu");
+
+        if (menu.style.display == "none")
+            menu.style.display = "flex";
+        else
+            menu.style.display = "none";
+    }
+}
+
 
 //color  de la nota
 function cambiarColor(event) {
@@ -353,16 +384,14 @@ function setCookie(cname, cvalue, exdays) {
 }
 
 
-async function iniciar() {
+export async function iniciar() {
 
-    if (document.cookie.includes("infoInicialCerrado=true"))
-        document.getElementById("infoInicial").style.display = "none";
-    else
-        document.getElementById("infoInicial").style.position = "absolute";
 
     await imprimirNotas();
     await iniciarEventLisners();
     await addDragEventListener(document.getElementById("addNotaButton"))
+    await addDragEventListener(document.getElementById("profilePicMenu"))
+
 }
 
 //CRUD
@@ -376,7 +405,7 @@ async function addNota() {
         color: colors[Math.floor(Math.random() * colors.length)]
     };
 
-    const docRef = await addDoc(collection(db, "notas"), nota);
+    const docRef = await addDoc(collection(db, userId), nota);
 
     await imprimirNotaPorId(docRef.id);
 
@@ -385,14 +414,14 @@ async function addNota() {
 
 async function updateTitulo(id, string) {
 
-    await updateDoc(doc(db, "notas", id), {
+    await updateDoc(doc(db, userId, id), {
         titulo: string
     });
 }
 
 async function updateContenido(id, string) {
 
-    await updateDoc(doc(db, "notas", id), {
+    await updateDoc(doc(db, userId, id), {
         contenido: string
     });
 
@@ -400,14 +429,14 @@ async function updateContenido(id, string) {
 
 async function updateColor(id, color) {
 
-    updateDoc(doc(db, "notas", id), {
+    updateDoc(doc(db, userId, id), {
         color: color
     });
 }
 
 export async function updateXY(id, x, y) {
 
-    updateDoc(doc(db, "notas", id), {
+    updateDoc(doc(db, userId, id), {
         x: x,
         y: y
     });
@@ -423,7 +452,7 @@ async function deleteNota(id) {
     nota.classList.add("eliminando");
 
     nota.addEventListener("animationend", async () => {
-        await deleteDoc(doc(db, "notas", id));
+        await deleteDoc(doc(db, userId, id));
         nota.remove();
     }, { once: true });
 }
@@ -431,5 +460,4 @@ async function deleteNota(id) {
 //MAIN
 
 
-await iniciar();
 

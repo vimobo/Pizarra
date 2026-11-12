@@ -1,3 +1,5 @@
+import { iniciar } from "./crudLogic.js";
+import { setUserId } from "./crudLogic.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, deleteDoc, addDoc, getDoc, doc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from "./../firebaseConfig.js"
@@ -63,13 +65,13 @@ function login() {
         .then((userCredential) => {
             const user = userCredential.user;
             document.getElementById("authDivLogin").style.display = "none";
-            mostrarPizarra();
+            setUserId(user.uid);
+            mostrarPizarra(user);
             // ...
         })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-                console.log(errorMessage);
 
             document.getElementById("loginErrors").textContent = errorMessage;
         });
@@ -106,6 +108,7 @@ async function register() {
                 // Signed up 
                 const user = userCredential.user;
                 document.getElementById("authDivRegister").style.display = "none";
+                setUserId(user.uid);
                 mostrarPizarra(user);
 
                 // ...
@@ -116,7 +119,7 @@ async function register() {
                 console.log(document.getElementById("registerErrors"));
                 document.getElementById("registerErrors").textContent = errorMessage;
             });
-            
+
     }
 }
 
@@ -132,9 +135,10 @@ async function signInGoogle() {
             const user = result.user;
             // IdP data available using getAdditionalUserInfo(result)
             // ...
-
             document.getElementById("authDivRegister").style.display = "none";
             document.getElementById("authDivLogin").style.display = "none";
+            
+            setUserId(user.uid);
             mostrarPizarra(user);
 
         }).catch((error) => {
@@ -152,10 +156,31 @@ async function signInGoogle() {
 }
 
 function mostrarPizarra(user) {
-    document.getElementById("helloWorld").textContent = user;
-    console.log(document.getElementById("addNotaButton").style.display);
+    document.getElementById("helloWorld").textContent = "Hola " + (user.displayName == null ? user.email : user.displayName);
+    document.getElementById("helloWorld").classList.add("apear");
+
+    const img = document.createElement("img");
+
+    console.log(user.photoURL);
+    img.src = user.photoURL != null ?
+        user.photoURL :
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+
+    img.alt = "Foto de perfil";
+    img.draggable = false;
+
+    document.getElementById("profilePicMenu").appendChild(img);
+
     document.getElementById("pizarra").style.display = "flex";
     document.getElementById("addNotaButton").style.display = "flex";
-    console.log(document.getElementById("addNotaButton").style.display);
+    document.getElementById("profilePicMenu").style.display = "flex";
+
+    if (document.cookie.includes("infoInicialCerrado=true"))
+        document.getElementById("infoInicial").style.display = "none";
+    else
+        document.getElementById("infoInicial").style.display = "flex";
+
+
+    iniciar();
 
 }

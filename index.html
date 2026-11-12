@@ -16,63 +16,94 @@
 </head>
 
 <body>
-    <h1>tu pizarra</h1>
+    <h1>Notes</h1>
 
     <div class="authDiv" id="authDivLogin">
+
         <h2>Login</h2>
+
         <label for="username">Mail</label>
         <input type="text" id="username" placeholder="hola@mail.com">
+
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="Hola*_123">
+
         <p id="notRegistered">No tienes cuenta? Registrate</p>
         <p class="errors" id="loginErrors"></p>
+
         <input type="button" id="signInGoogle" value="Sign In With Google">
 
-
         <input type="submit" id="submitLogin" value="Submit">
+
     </div>
 
     <div class="authDiv" id="authDivRegister">
+
         <h2>Register</h2>
+
         <label for="usernameRegister">Mail</label>
         <input type="text" id="usernameRegister">
+
         <label for="passwordRegister">Password</label>
         <input type="password" id="passwordRegister">
+
         <label for="passwordRegister2">Repeat password</label>
         <input type="password" id="passwordRegister2">
-        <p id="notLogged">Ya tienes cuenta? Logeate</p>
-        <p  class="errors"  id="registerErrors"></p>
-        <input type="button" id="registerGoogle" value="Register With Google">
 
-        
+        <p id="notLogged">Ya tienes cuenta? Logeate</p>
+        <p class="errors" id="registerErrors"></p>
+
+        <input type="button" id="registerGoogle" value="Register With Google">
         <input type="submit" id="submitRegister" value="Submit">
     </div>
 
     <div id="pizarra">
-        <div>
-            <p id="helloWorld"></p>
-            <img  id="profilePic" src="" alt="">
-        </div>
-        <div id="infoInicial">
-            <h2>Bienvenido a la tu pizarra</h2>
-            <div>
-                <p>Puedes arrastrar las notas manteniendo pulsado sobre el título</p>
-                <p>Crea notas con el icono +</p>
-                <p>Los cambios se actualizan en la nube</p>
-            </div>
-            <button id="okButton">Ok</button>
-            <button id="notShowAgainButton">No mostrar Otra vez</button>
 
 
-        </div>
-        
+
     </div>
+
     <div id="confirmDelete">
-            <p>Do you want to delete?</p>
-            <button id="confirmDeleteYes">Yes</button>
-            <button id="confirmDeleteNo">No</button>
-        </div>
+
+        <p>Do you want to delete?</p>
+        <button id="confirmDeleteYes">Yes</button>
+        <button id="confirmDeleteNo">No</button>
+
+    </div>
+
     <div id="addNotaButton" style="left: 5vw; top: 85vh;">+</div>
+
+    <p id="helloWorld"></p>
+
+
+    <div id="profilePicMenu" draggable="false" style="left: 85vw; top: 5vh;">
+
+        <div id="profileMenu">
+
+            <button id="closeSession">Close Session</button>
+            <button id="changePic">Change Profile Picture</button>
+
+        </div>
+
+    </div>
+
+    <div id="infoInicial">
+
+        <h2>Bienvenido a la tu pizarra</h2>
+
+        <div>
+
+            <p>Puedes arrastrar las notas manteniendo pulsado sobre el título</p>
+            <p>Crea notas con el icono +</p>
+            <p>Los cambios se actualizan en la nube</p>
+
+        </div>
+
+        <button id="okButton">Ok</button>
+        <button id="notShowAgainButton">No mostrar Otra vez</button>
+
+    </div>
+
 
 </body>
 
