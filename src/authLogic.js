@@ -8,7 +8,6 @@ import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/fir
 
 const provider = new GoogleAuthProvider();
 
-
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,11 +23,16 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 
-signOut(auth).then(() => {
-    // Sign-out successful.
+
+
+export function closeSession() {
+    signOut(auth).then(() => {
+    console.log("hola");
+    window.location.reload();
 }).catch((error) => {
     // An error happened.
 });
+}
 
 document.getElementById("notRegistered").addEventListener("click", () => {
     document.getElementById("authDivLogin").style.display = "none";
@@ -80,8 +84,6 @@ function login() {
 
 
 async function register() {
-
-
 
     let mail = document.getElementById("usernameRegister").value;
     let pass = document.getElementById("passwordRegister").value;
@@ -184,3 +186,4 @@ function mostrarPizarra(user) {
     iniciar();
 
 }
+

@@ -3,6 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore, deleteDoc, addDoc, getDoc, doc, getDocs, collection, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from "./../firebaseConfig.js"
 import { addDragEventListener } from "./movingLogic.js"
+import { closeSession } from "./authLogic.js";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,9 +20,9 @@ const db = getFirestore(app);
 const colors = ["blue", "red", "green", "yellow"];
 
 //idUser
-let userId = ""; 
+let userId = "";
 
-function getUserId(){
+function getUserId() {
     return userId;
 }
 
@@ -43,7 +44,7 @@ async function imprimirNotaPorId(id) {
         `<div class="nota ${miDoc.color}" id="${id}"
           style="left: ${miDoc.x}vw; top: ${miDoc.y}vh;">
         <textarea class="titulo" placeholder="Título" readonly>${miDoc.titulo}</textarea>
-        <button class="openMenuButton">☰</button>
+        <button class="openMenuButton" draggable='false'>☰</button>
         <div class="notaMenu" id="notaMenu" style="display: none;"> 
             <div class="notaMenuOption" id='notaMenuBlue'></div>
             <div class="notaMenuOption" id='notaMenuRed'></div>
@@ -64,7 +65,6 @@ async function imprimirNotas() {
 
     document.getElementById("pizarra").innerHTML = "";
     for (let doc of listaDatos) {
-        console.log(doc);
         await imprimirNotaPorId(doc.id);
     }
 }
@@ -87,8 +87,7 @@ async function iniciarEventLisners() {
     });
 
     addNotaButton.addEventListener("pointerup", () => {
-        console.log(shortClick)
-        console.log()
+
         if (shortClick)
             addNota();
     });
@@ -121,7 +120,6 @@ async function iniciarEventLisners() {
         }
         else if (e.target.id == "confirmDeleteNo") {
 
-            console.log("Eliminación cancelada");
 
         }
 
@@ -232,7 +230,6 @@ async function iniciarEventLisners() {
     //Info inicial
     infoInicial.addEventListener("click", (event) => {
         const target = event.target;
-        console.log(target)
         if (target.id == "okButton")
             target.closest("#infoInicial").style = "display: none;";
 
@@ -254,9 +251,12 @@ async function iniciarEventLisners() {
 
         if (event.pointerType !== "touch") return;
 
+        if (!event.target.matches(".nota .contenido")) return;
+
         notaSwipe = event.target.closest(".nota");
 
         if (!notaSwipe) return;
+
 
         startX = event.clientX;
         startY = event.clientY;
@@ -289,7 +289,9 @@ async function iniciarEventLisners() {
     pizarra.addEventListener("pointercancel", () => {
         notaSwipe = null;
     });
-
+    
+    //close session button
+    document.getElementById("closeSession").addEventListener("pointerup", closeSession);
 }
 
 
